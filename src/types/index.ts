@@ -7,8 +7,8 @@ export interface ThemeToggleProps {
 
 export interface FileUploadProps {
   label: string;
-  onChange: (file: File) => void;
-  preview: string | null;
+  onChange: (file: File | File[]) => void; // ✅ allow single or multiple
+  preview?: string | null;                 // ✅ optional now
   icon: LucideIcon;
   isLoading: boolean;
 }
