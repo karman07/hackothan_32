@@ -2,6 +2,7 @@ import Footer from '@/components/layout/Footer';
 import Navbar from '@/components/layout/Navbar';
 import { Github, Linkedin, Mail, Code,  Brain,  Award, GraduationCap, MapPin, Calendar, Star, Users, Coffee,  Target, Lightbulb } from 'lucide-react';
 import Shubh from '../assets/shubh.jpeg';
+import Ruh from '../assets/ruhan.jpeg';
 const TeamPage = () => {
 
   const teamMembers = [
@@ -62,7 +63,7 @@ const TeamPage = () => {
       name: "Ruhan Chopra",
       role: "ML Engineer & Data Scientist",
       specialization: "Computer Vision & OCR Technology",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face",
+      image: Ruh,
       college: "Thapar Polytechnic, Patiala",
       year: "Final Year B.Tech ECE",
       location: "Dhanbad, Jharkhand",
