@@ -1,7 +1,7 @@
 import Footer from '@/components/layout/Footer';
 import Navbar from '@/components/layout/Navbar';
 import { Github, Linkedin, Mail, Code,  Brain,  Award, GraduationCap, MapPin, Calendar, Star, Users, Coffee,  Target, Lightbulb } from 'lucide-react';
-
+import Shubh from '../assets/shubh.jpeg';
 const TeamPage = () => {
 
   const teamMembers = [
@@ -88,7 +88,7 @@ const TeamPage = () => {
       name: "Shubhkarman Singh",
       role: "DevOps Engineer & Database Architect",
       specialization: "Cloud Infrastructure & System Security",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop&crop=face",
+      image: Shubh,
       college: "Thapar Polytechnic, Patiala",
       year: "Final Year B.Tech IT",
       location: "Patiala, Punjab",
