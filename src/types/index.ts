@@ -13,8 +13,10 @@ export interface FileUploadProps {
   isLoading: boolean;
 }
 
+// types.ts
 export interface CertificateResult {
   extracted_text: string;
+
   key_details: {
     certificate_type: string;
     course: string;
@@ -31,10 +33,24 @@ export interface CertificateResult {
     place: string;
     exists_in_db: boolean;
   };
-  authenticity_check: string;
-  signature_similarity_score: number;
-  signature_match: boolean;
+
+  institute: string | null;
+  db_match: boolean;
+
+  qr_result: {
+    qr_found: boolean;
+    qr_valid: boolean;
+  };
+
+  tampered: boolean;
+  file_hash: string;
+  is_legitimate: boolean;
+
+  metadata: Record<string, any> | null;
+  ai_generated: boolean;
 }
+
+
 
 export interface ResultCardProps {
   result: CertificateResult | null;

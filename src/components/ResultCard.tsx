@@ -7,6 +7,11 @@ import {
   ChevronRight,
   CheckCircle2,
   XCircle,
+  QrCode,
+  Database,
+  Bug,
+  Brain,
+  Hash,
 } from "lucide-react";
 import { ResultCardProps } from "../types";
 
@@ -20,15 +25,14 @@ export const ResultCard: React.FC<ResultCardProps> = ({ result }) => {
   const {
     extracted_text,
     key_details,
-    authenticity_check,
-    signature_similarity_score,
-    signature_match,
+    db_match,
+    qr_result,
+    tampered,
+    file_hash,
+    is_legitimate,
+    metadata,
+    ai_generated,
   } = result;
-
-  const existsInDb = key_details?.exists_in_db ?? false;
-
-  // ✅ Final legitimacy logic
-  const isLegitimate = existsInDb && signature_match;
 
   const tabs = [
     { id: "overview", label: "Overview", icon: ClipboardCheck },
@@ -71,87 +75,126 @@ export const ResultCard: React.FC<ResultCardProps> = ({ result }) => {
             {/* Final Verdict */}
             <div
               className={`p-4 rounded-xl flex items-center gap-3 ${
-                isLegitimate ? "bg-green-100" : "bg-red-100"
+                is_legitimate ? "bg-green-100" : "bg-red-100"
               }`}
             >
-              {isLegitimate ? (
+              {is_legitimate ? (
                 <CheckCircle2 className="w-6 h-6 text-green-600" />
               ) : (
                 <XCircle className="w-6 h-6 text-red-600" />
               )}
-     <p className="font-semibold text-lg text-black">
-  {isLegitimate
-    ? "✅ Certificate is Legitimate"
-    : "❌ Certificate is Suspicious"}
-</p>
-            </div>
-
-            {/* Authenticity Text */}
-            <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl">
-              <h3 className="text-lg font-semibold mb-2">Authenticity Check</h3>
-              <p className="text-gray-700 dark:text-gray-300">
-                {authenticity_check}
-              </p>
-            </div>
-
-            {/* Signature Check */}
-            <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl">
-              <h3 className="text-lg font-semibold mb-2">Signature Match</h3>
-              <p
-                className={`font-medium ${
-                  signature_match ? "text-green-600" : "text-red-600"
-                }`}
-              >
-                {signature_match ? "✔ Match found" : "✘ No match"}
-              </p>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                Similarity Score: {signature_similarity_score.toFixed(2)}
+              <p className="font-semibold text-lg text-black">
+                {is_legitimate
+                  ? "✅ Certificate is Legitimate"
+                  : "❌ Certificate is Suspicious"}
               </p>
             </div>
 
             {/* Database Check */}
-            <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl">
-              <h3 className="text-lg font-semibold mb-2">Database Verification</h3>
-              <p
+            <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl flex gap-3 items-center">
+              <Database className="w-5 h-5 text-blue-500" />
+              <span
                 className={`font-medium ${
-                  existsInDb ? "text-green-600" : "text-red-600"
+                  db_match ? "text-green-600" : "text-red-600"
                 }`}
               >
-                {existsInDb
-                  ? "✔ Candidate found in records"
-                  : "✘ Candidate not found in records"}
-              </p>
+                {db_match
+                  ? "✔ Candidate exists in database"
+                  : "✘ Candidate not found in database"}
+              </span>
+            </div>
+
+            {/* QR Validation */}
+            <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl">
+              <h3 className="text-lg font-semibold mb-2 flex gap-2 items-center">
+                <QrCode className="w-5 h-5 text-blue-500" /> QR Verification
+              </h3>
+              {!qr_result?.qr_found ? (
+                <p className="text-red-600">❌ No QR code found</p>
+              ) : qr_result.qr_valid ? (
+                <p className="text-green-600">✔ QR code is valid</p>
+              ) : (
+                <p className="text-red-600">❌ QR code invalid</p>
+              )}
+            </div>
+
+            {/* Tampering Check */}
+            <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl flex gap-3 items-center">
+              <Bug className="w-5 h-5 text-blue-500" />
+              <span
+                className={`font-medium ${
+                  tampered ? "text-red-600" : "text-green-600"
+                }`}
+              >
+                {tampered ? "⚠ Tampering detected" : "✔ No tampering detected"}
+              </span>
+            </div>
+
+            {/* AI Generated Check */}
+            <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl flex gap-3 items-center">
+              <Brain className="w-5 h-5 text-blue-500" />
+              <span
+                className={`font-medium ${
+                  ai_generated ? "text-red-600" : "text-green-600"
+                }`}
+              >
+                {ai_generated
+                  ? "⚠ Content may be AI generated"
+                  : "✔ Human-generated text"}
+              </span>
+            </div>
+
+            {/* File Hash */}
+            <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl flex gap-3 items-center">
+              <Hash className="w-5 h-5 text-blue-500" />
+              <span className="text-sm break-all text-gray-700 dark:text-gray-300">
+                File Hash: {file_hash}
+              </span>
             </div>
           </div>
         )}
 
         {activeTab === "details" && (
           <div className="grid md:grid-cols-2 gap-4">
-            {Object.entries(key_details).map(([key, value]) => (
-              <div
-                key={key}
-                className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl flex items-start gap-2"
-              >
-                <ChevronRight className="w-4 h-4 mt-1 text-blue-500" />
-                <div>
-                  <p className="text-xs uppercase text-gray-400">
-                    {key.replace(/_/g, " ")}
-                  </p>
-                  <p className="font-medium text-gray-700 dark:text-gray-200">
-                    {String(value)}
-                  </p>
+            {/* <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl">
+              <p className="text-xs uppercase text-gray-400">Institute</p>
+              <p className="font-medium">{institute || "-"}</p>
+            </div> */}
+            {key_details &&
+              Object.entries(key_details).map(([key, value]) => (
+                <div
+                  key={key}
+                  className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl flex items-start gap-2"
+                >
+                  <ChevronRight className="w-4 h-4 mt-1 text-blue-500" />
+                  <div>
+                    <p className="text-xs uppercase text-gray-400">
+                      {key.replace(/_/g, " ")}
+                    </p>
+                    <p className="font-medium text-gray-700 dark:text-gray-200">
+                      {String(value || "-")}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         )}
 
         {activeTab === "checks" && (
           <div className="space-y-4">
+            {/* OCR Text */}
             <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl">
               <h3 className="text-lg font-semibold mb-2">Extracted Text</h3>
               <pre className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
-                {extracted_text}
+                {extracted_text || "No OCR text extracted"}
+              </pre>
+            </div>
+
+            {/* Metadata */}
+            <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl">
+              <h3 className="text-lg font-semibold mb-2">Metadata</h3>
+              <pre className="text-xs text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                {metadata ? JSON.stringify(metadata, null, 2) : "No metadata"}
               </pre>
             </div>
           </div>
